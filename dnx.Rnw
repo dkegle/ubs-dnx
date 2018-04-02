@@ -1,0 +1,32 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath, amssymb}
+\usepackage{breqn}
+\usepackage{parskip}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage[font=scriptsize]{caption}
+\usepackage[hidelinks]{hyperref}
+
+ \geometry{
+ a4paper,
+ bottom=1.25in,
+ right=1.25in,
+ left=1.25in,
+ top=1.25in,
+}
+
+\newcommand{\vertBar}[0]{\,\vert\,}
+
+\def\R{\mathbb R}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE,echo=F,include=F}
+
+<<echo=FALSE, include=FALSE>>=
+options(width=60)
+@
+
+\par{Doma\v{c}a naloga X}
+
+\end{document}

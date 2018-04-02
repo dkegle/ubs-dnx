@@ -1,1 +1,3 @@
-# ubs-dnx
+## ubs-dnx
+
+domaca naloga x za ubs
