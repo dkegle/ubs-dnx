@@ -1,5 +1,7 @@
 \documentclass[11pt]{article}
-
+\usepackage[slovene]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{amsmath, amssymb}
 \usepackage{breqn}
 \usepackage{parskip}
@@ -27,6 +29,37 @@
 options(width=60)
 @
 
-\par{Doma\v{c}a naloga X}
+\begin{figure}
+\centering
+\Large {Domača naloga X}
+\end{figure}
+
+\section{Načrt in zbiranje podatkov}
+Načrt:
+
+- tri vrečke bobi palčk\\
+- meter (ki meri na mm)\\
+- izmerimo palčke v prvih dveh vrečkah\\
+- vržemo tretjo vrečko iz 4m, izmerimo\\
+
+Viri pristranskosti:
+
+- napaka merjenja, $\pm 0.5 \text{mm}$\\
+- dolžine zlomljenih palčk so prevelike (ne zlomijo se točno po sredini)\\
+
+Model:
+
+- mixture of two normal distributions (prvi za cele palčke, druge za zlomljene)
+
+Apriori:
+
+- uniform?
+
+
+\section{Analiza podatkov}
+
+
+\section{Interpretacija rezultatov}
+
 
 \end{document}
