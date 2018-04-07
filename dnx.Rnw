@@ -39,36 +39,141 @@ Velikost ekipe: $2$.
 \section{Načrt in zbiranje podatkov}
 Imamo štiri vrečke bobi palčk. Prešteli bomo koliko jih je in izmerili njihove dolžine, pri čemer bomo dve vrečki spustili iz višine $4\text{m}$. Meritve dolžin bomo opravili na $\pm 1\text{mm}$ natančno in jih normalizirali na velikost vrečke.
 
-Opazimo, da so v vrečki že v trgovini nekatere palčke zlomljene. Zato model dolžin palčk sestavimo iz dveh normalnih porazdelitev, ki bosta opisovali dolžine celih in zlomljenih palčk, ter Bernoullijeve porazdelitve, ki bo opisovala delež zlomljenih.
+Opazimo, da so že v trgovini v vrečki nekatere palčke zlomljene. Zato model dolžin palčk (v posamezni vrečki) sestavimo iz dveh normalnih porazdelitev, ki opisujeta dolžine celih in zlomljenih palčk, ter Bernoullijeve porazdelitve, ki opisuje delež zlomljenih.
 
 Skupaj imamo torej $5$ parametrov. Za njihove apriorne porazdelitve izberemo 
 \begin{equation*}
 \begin{split}
-\text{Povprečje celih: } \mu _1 \sim & \text{ U }(0.5,1) \\
-\text{Povprečje zlomljenih: }\mu _2 \sim &\text{ U }(0,0.5) \\
-\text{Varianca celih: }\sigma _1 \sim &\text{ U }(0,100) \\
-\text{Varianca zlomljenih: }\sigma _2 \sim &\text{ U }(0,500) \\
-\text{Delež zlomljenih: }\theta \sim &\text{ U }(0,1) \\
+\text{Povprečje celih: } \mu _1 \sim & \text{ U} (0.5,1) \\
+\text{Povprečje zlomljenih: }\mu _2 \sim &\text{ U}(0,0.5) \\
+\text{Varianca celih: }\sigma _1 \sim &\text{ U}(0,100) \\
+\text{Varianca zlomljenih: }\sigma _2 \sim &\text{ U}(0,500) \\
+\text{Delež zlomljenih: }\theta \sim &\text{ U}(0,1) \\
 \end{split}
 \end{equation*}
 
 Za povprečje celih menimo, da je vsaj polovica dolžine vrečke. Za povprečje zlomljenih menimo, da je kvečjemu polovica dolžine vrečke (palčka se zlomi na vsaj dva dela). Za varianci izberemo zelo neinformativno mnenje, ker mislimo, da sta lahko skoraj kjerkoli. Podobno za delež zlomljenih.
 
-Za model števila palčk izberemo normalno porazdelitev z dvema parametroma $\mu$ in $\sigma$. Ker si vnaprej ne znamo predstavljati kolikšno je število palčk, za apriorno porazdelitev vzamemo Jeffreyev prior.
+Za model števila palčk v vrečki izberemo normalno porazdelitev z dvema parametroma $\mu$ in $\sigma$. Ker si vnaprej ne znamo predstavljati kolikšno je število palčk, za apriorno porazdelitev vzamemo Jeffreyev prior. Model za prvi dve vrečki ločimo od modela za vrečki, ki smo ju spustili iz $4\text{m}$.
 
 Med izvajanjem meritev opazimo naslednje potencialne vire pristranskosti:
 \begin{itemize}
 \item Palčke se ne zlomijo vedno pravokotno, ampak se pogosto zlomijo malce pod kotom. Zato je vsota dolžin zlomljenih lahko večja kot bi bila, če bi jih izmerili cele.
 \item Nekateri deli so zlomljeni vodoravno (vzdolž palčke). Odločimo se, da jih ignoriramo, saj je preostanek vsebovan v drugih palčkah (ne prispeva k pristranskosti glede dolžin).
 \item Nekateri deli palčk so zelo majhni ali skoraj zdrobljeni. Odločimo se, da jih ne vključimo v meritve.
+\item Za model števila palčk imamo le dva vzorca (dve celi vrečki in dve vrečki, ki smo jih spustili iz $4\text{m}$). 
 \end{itemize}
 
 
-\section{Analiza podatkov}
+\section{Rezultati}
+
+Modele izdelamo s pomočjo programskega jezika Stan.
+
+\begin{minipage}[t]{0.48\linewidth}
+<<label=FIG1,fig=T,width=8,height=4>>=
+library(ggplot2)
+library(gridExtra)
+library("rstan") # observe startup messages
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+sticks1 <- read.csv(file="models/vrecka-1.csv", header=TRUE, sep=",")
+all_sticks1 <-c(sticks1$cela, sticks1$sredina.zlomljene, sticks1$konec.zlomljen)
+all_sticks1 <- all_sticks1[!is.na(all_sticks1)]
+
+sticks2 <- read.csv(file="models/vrecka-2.csv", header=TRUE, sep=",")
+all_sticks2 <-c(sticks2$cela, sticks2$sredina.zlomljene, sticks2$konec.zlomljen)
+all_sticks2 <- all_sticks2[!is.na(all_sticks2)]
+
+y1<-c(length(all_sticks1), length(all_sticks2)) 
+
+# Prepare dataset for STAN
+stan_data1 <- list(y = y1,
+                  n = length(y1))
+
+# Sample
+output1 <- stan(file = "models/normal.stan",
+               data = stan_data1,
+               iter = 1500, warmup = 500,
+               chains = 4,
+               seed = 100,
+               control = list(adapt_delta = 0.9))
+
+p1 = plot(output1)
+p2 = ggplot() + geom_density(aes(x=extract(output1)$y_pred))+xlim(0, 1000) + 
+  xlab("Stevilo palck") + ylab("Gostota") + 
+  theme_gray(base_size=13)
+
+grid.arrange(p2, p1, nrow = 2)
+
+library(mcmcse)
+
+smp_mu1 <- extract(output1)$mu
+
+#ess(smp_mu1) # effective sample size
+
+#mcse(smp_mu1)  # est. MCMC standard error
+@
+\includegraphics[width = \linewidth]{./dnx-FIG1}
+\vspace{-.85cm}
+\captionof{figure}{Parametri in aposteriorna gostota za število palčk v prvih dveh vrečkah.}
+\label{fig1}
+\vspace{.3cm}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+<<label=FIG2,fig=T,width=8,height=4>>=
+library(ggplot2)
+library(gridExtra)
+library("rstan") # observe startup messages
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+sticks3 <- read.csv(file="models/vrecka-3.csv", header=TRUE, sep=",")
+all_sticks3 <-c(sticks3$cela, sticks3$sredina.zlomljene, sticks3$konec.zlomljen)
+all_sticks3 <- all_sticks3[!is.na(all_sticks3)]
+
+sticks4 <- read.csv(file="models/vrecka-4.csv", header=TRUE, sep=",")
+all_sticks4 <-c(sticks4$cela, sticks4$sredina.zlomljene, sticks4$konec.zlomljen)
+all_sticks4 <- all_sticks4[!is.na(all_sticks4)]
+
+y2<-c(length(all_sticks3), length(all_sticks4)) #thrown packs
+
+# Prepare dataset for STAN
+stan_data2 <- list(y = y2,
+                  n = length(y2))
+
+# Sample
+output2 <- stan(file = "models/normal.stan",
+               data = stan_data2,
+               iter = 1500, warmup = 500,
+               chains = 4,
+               seed = 100,
+               control = list(adapt_delta = 0.9))
+
+p1 = plot(output2)
+p2 = ggplot() + geom_density(aes(x=extract(output2)$y_pred))+xlim(0, 1000) + 
+  xlab("Stevilo palck") + ylab("Gostota") + 
+  theme_gray(base_size=13)
 
 
+grid.arrange(p2, p1, nrow = 2)
 
-\section{Interpretacija rezultatov}
+library(mcmcse)
+
+smp_mu2 <- extract(output2)$mu
+
+#ess(smp_mu2) # effective sample size
+
+#mcse(smp_mu2)  # est. MCMC standard error
+@
+\includegraphics[width = \linewidth]{./dnx-FIG2}
+\vspace{-.85cm}
+\captionof{figure}{Parametri in aposteriorna gostota za število palčk v drugih dveh vrečkah (spuščenih iz višine $4\text{m}$).}
+\label{fig2}
+
+\end{minipage}
+
+
+\section{Diskusija}
 
 
 \end{document}
