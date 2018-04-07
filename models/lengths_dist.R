@@ -140,14 +140,14 @@ print(ess(smp_y_pred2)) # effective sample size
 print(mcse(smp_y_pred2))  # est. MCMC standard error
 
 
-smp_y_pred3 <- extract(output1)$y_pred
+smp_y_pred3 <- extract(output3)$y_pred
 
 print(ess(smp_y_pred3)) # effective sample size
 
 print(mcse(smp_y_pred3))  # est. MCMC standard error
 
 
-smp_y_pred4 <- extract(output1)$y_pred
+smp_y_pred4 <- extract(output4)$y_pred
 
 print(ess(smp_y_pred4)) # effective sample size
 
