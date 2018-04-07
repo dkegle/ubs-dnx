@@ -83,7 +83,7 @@ Med izvajanjem meritev opazimo naslednje potencialne vire napak:
 
 \section{Rezultati}
 
-Model izračuna pričakovano število palčk za cele vrečke $121.5$, standardni odklon $\sigma =47.5$ in napako $err _{mcmc} = \pm 1.3$. Za spuščene vrečke dobimo vrednosti $\mu = 303.7$, $\sigma = 132.6$ in napako $err _{mcmc} = \pm 5.8$.
+Model izračuna pričakovano število palčk za cele vrečke $121.5$, standardni odklon $\sigma =87.9$ in napako $err _{mcmc} = \pm 4.8$. Za spuščene vrečke dobimo vrednosti $\mu = 303.1$, $\sigma = 399.6$ in napako $err _{mcmc} = \pm 14.7$.
 
 Za dolžine palčk so na slikah \ref{fig1}-\ref{fig4} podane (od zgoraj navzdol) ocene parametrov, traceplot, napovedna aposteriorna porazdelitev in pripadajoči (normalizirani) histogram.
 
