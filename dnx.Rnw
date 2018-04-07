@@ -10,6 +10,15 @@
 \usepackage[font=scriptsize]{caption}
 \usepackage[hidelinks]{hyperref}
 
+\usepackage{titlesec}
+
+\titleformat{\subsection}[runin]% runin puts it in the same paragraph
+        {\normalfont\bfseries}% formatting commands to apply to the whole heading
+        {\thesubsection}% the label and number
+        {0.5em}% space between label/number and subsection title
+        {}% formatting commands applied just to subsection title
+        [.]% punctuation or other commands following subsection title
+
  \geometry{
  a4paper,
  bottom=1.25in,
@@ -17,6 +26,9 @@
  left=1.25in,
  top=1.25in,
 }
+
+\titlespacing{\section}{0pt}{.75em}{.25em}
+\titlespacing{\subsection}{0pt}{.75em}{.25em}
 
 \newcommand{\vertBar}[0]{\,\vert\,}
 
@@ -37,9 +49,10 @@ options(width=60)
 Velikost ekipe: $2$.
 
 \section{Načrt in zbiranje podatkov}
+\subsection{Zbiranje podatkov}
 Imamo štiri vrečke bobi palčk. Prešteli bomo koliko jih je in izmerili njihove dolžine, pri čemer bomo dve vrečki spustili iz višine $4\text{m}$. Meritve dolžin bomo opravili na $\pm 1\text{mm}$ natančno in jih normalizirali na velikost vrečke.
-
-Opazimo, da so že v trgovini v vrečki nekatere palčke zlomljene. Zato model dolžin palčk (v posamezni vrečki) sestavimo iz dveh normalnih porazdelitev, ki opisujeta dolžine celih in zlomljenih palčk, ter Bernoullijeve porazdelitve, ki opisuje delež zlomljenih.
+\subsection{Model dolžine palčk}
+Opazimo, da so že v trgovini v vrečki nekatere palčke zlomljene. Zato model dolžin palčk (v posamezni vrečki) sestavimo iz dveh normalnih porazdelitev, ki opisujeta dolžine celih in zlomljenih palčk, ter Bernoullijeve porazdelitve, ki opisuje delež celih.
 
 Skupaj imamo torej $5$ parametrov. Za njihove apriorne porazdelitve izberemo 
 \begin{equation*}
@@ -48,15 +61,19 @@ Skupaj imamo torej $5$ parametrov. Za njihove apriorne porazdelitve izberemo
 \text{Povprečje zlomljenih: }\mu _2 \sim &\text{ U}(0,0.5) \\
 \text{Varianca celih: }\sigma _1 \sim &\text{ U}(0,100) \\
 \text{Varianca zlomljenih: }\sigma _2 \sim &\text{ U}(0,500) \\
-\text{Delež zlomljenih: }\theta \sim &\text{ U}(0,1) \\
+\text{Delež celih: }\theta \sim &\text{ U}(0,1) \\
 \end{split}
 \end{equation*}
 
-Za povprečje celih menimo, da je vsaj polovica dolžine vrečke. Za povprečje zlomljenih menimo, da je kvečjemu polovica dolžine vrečke (palčka se zlomi na vsaj dva dela). Za varianci izberemo zelo neinformativno mnenje, ker mislimo, da sta lahko skoraj kjerkoli. Podobno za delež zlomljenih.
+\subsection{Model števila palčk}
+Za povprečje celih menimo, da je vsaj polovica dolžine vrečke. Za povprečje zlomljenih menimo, da je kvečjemu polovica dolžine vrečke (palčka se zlomi na vsaj dva dela). Za varianci izberemo zelo neinformativno mnenje, ker mislimo, da sta lahko skoraj kjerkoli. Podobno za delež celih.
 
 Za model števila palčk v vrečki izberemo normalno porazdelitev z dvema parametroma $\mu$ in $\sigma$. Ker si vnaprej ne znamo predstavljati kolikšno je število palčk, za apriorno porazdelitev vzamemo Jeffreyev prior. Model za prvi dve vrečki ločimo od modela za vrečki, ki smo ju spustili iz $4\text{m}$.
 
-Med izvajanjem meritev opazimo naslednje potencialne vire pristranskosti:
+Modele izdelamo s pomočjo programskega jezika Stan.
+
+\subsection{Viri pristranskosti}
+Med izvajanjem meritev opazimo naslednje potencialne vire napak:
 \begin{itemize}
 \item Palčke se ne zlomijo vedno pravokotno, ampak se pogosto zlomijo malce pod kotom. Zato je vsota dolžin zlomljenih lahko večja kot bi bila, če bi jih izmerili cele.
 \item Nekateri deli so zlomljeni vodoravno (vzdolž palčke). Odločimo se, da jih ignoriramo, saj je preostanek vsebovan v drugih palčkah (ne prispeva k pristranskosti glede dolžin).
@@ -66,8 +83,6 @@ Med izvajanjem meritev opazimo naslednje potencialne vire pristranskosti:
 
 
 \section{Rezultati}
-
-Modele izdelamo s pomočjo programskega jezika Stan.
 
 \begin{minipage}[t]{0.48\linewidth}
 <<label=FIG1,fig=T,width=8,height=4>>=
@@ -98,12 +113,13 @@ output1 <- stan(file = "models/normal.stan",
                seed = 100,
                control = list(adapt_delta = 0.9))
 
-p1 = plot(output1)
-p2 = ggplot() + geom_density(aes(x=extract(output1)$y_pred))+xlim(0, 1000) + 
+
+p1 = ggplot() + geom_density(aes(x=extract(output1)$y_pred))+xlim(0, 1000) + 
   xlab("Stevilo palck") + ylab("Gostota") + 
   theme_gray(base_size=13)
+p2 = plot(output1)
 
-grid.arrange(p2, p1, nrow = 2)
+grid.arrange(p1, p2, nrow = 2)
 
 library(mcmcse)
 
@@ -114,7 +130,7 @@ smp_mu1 <- extract(output1)$mu
 #mcse(smp_mu1)  # est. MCMC standard error
 @
 \includegraphics[width = \linewidth]{./dnx-FIG1}
-\vspace{-.85cm}
+\vspace{-.65cm}
 \captionof{figure}{Parametri in aposteriorna gostota za število palčk v prvih dveh vrečkah.}
 \label{fig1}
 \vspace{.3cm}
@@ -149,13 +165,12 @@ output2 <- stan(file = "models/normal.stan",
                seed = 100,
                control = list(adapt_delta = 0.9))
 
-p1 = plot(output2)
-p2 = ggplot() + geom_density(aes(x=extract(output2)$y_pred))+xlim(0, 1000) + 
+p1 = ggplot() + geom_density(aes(x=extract(output2)$y_pred))+xlim(0, 1000) + 
   xlab("Stevilo palck") + ylab("Gostota") + 
   theme_gray(base_size=13)
+p2 = plot(output2)
 
-
-grid.arrange(p2, p1, nrow = 2)
+grid.arrange(p1, p2, nrow = 2)
 
 library(mcmcse)
 
@@ -166,12 +181,38 @@ smp_mu2 <- extract(output2)$mu
 #mcse(smp_mu2)  # est. MCMC standard error
 @
 \includegraphics[width = \linewidth]{./dnx-FIG2}
-\vspace{-.85cm}
+\vspace{-.65cm}
 \captionof{figure}{Parametri in aposteriorna gostota za število palčk v drugih dveh vrečkah (spuščenih iz višine $4\text{m}$).}
 \label{fig2}
 
 \end{minipage}
+\begin{minipage}[t]{0.48\linewidth}
 
+\includegraphics[width = \linewidth]{./dnx-FIG3}
+\vspace{-.65cm}
+\captionof{figure}{Dolžine prva vrečka.}
+\label{fig3}
+\vspace{.3cm}
+\includegraphics[width = \linewidth]{./dnx-FIG4}
+\vspace{-.65cm}
+\captionof{figure}{Dolžine druga vrečka.}
+\label{fig4}
+\vspace{.3cm}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\includegraphics[width = \linewidth]{./dnx-FIG5}
+\vspace{-.65cm}
+\captionof{figure}{Dolžine tretja vrečka.}
+\label{fig5}
+\vspace{.3cm}
+\includegraphics[width = \linewidth]{./dnx-FIG6}
+\vspace{-.65cm}
+\captionof{figure}{Dolžine četrta vrečka.}
+\label{fig6}
+\vspace{.3cm}
+\end{minipage}
 
 \section{Diskusija}
 
