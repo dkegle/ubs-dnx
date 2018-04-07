@@ -8,7 +8,7 @@ parameters {
   real<lower = 0.0> sigma;
 }
 
-// 5 parametric model
+// 2 parametric model
 model {
   
   // normal LH
