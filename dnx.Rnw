@@ -31,29 +31,33 @@ options(width=60)
 
 \begin{figure}
 \centering
-\Large {Domača naloga X}
+\Large {Domača naloga X: \emph{Bobi palčke}}
 \end{figure}
 
-\section{Načrt in zbiranje podatkov}
-Načrt:
+Velikost ekipe: $2$.
 
-- tri vrečke bobi palčk\\
-- meter (ki meri na mm)\\
-- izmerimo palčke v prvih dveh vrečkah\\
-- vržemo tretjo vrečko iz 4m, izmerimo\\
+\section{Načrt in zbiranje podatkov}
+Imamo štiri vrečke bobi palčk. Merili bomo njihove dolžine, pri čemer bomo dve vrečki spustili iz višine $4\text{m}$. Meritve bomo opravili na $\pm 1\text{mm}$ natančno in jih normalizirali na velikost vrečke.
+
+Opazimo, da so že v trgovini v vrečkah nekatere palčke zlomljene. Zato naš model (za eno vrečko) sestavimo iz dveh normalnih porazdelitev, ki bosta opisovali dolžine celih in zlomljenih palčk, ter Bernoullijeve porazdelitve, ki bo opisovala delež zlomljenih palčk.
+
+Skupaj imamo torej $5$ parametrov in za njihove apriorne porazdelitve izberemo 
+\begin{equation*}
+\begin{split}
+\text{Povprečje celih: } \mu _1 \sim & \text{ U }(0.5,1) \\
+\text{Povprečje zlomljenih: }\mu _2 \sim &\text{ U }(0,0.5) \\
+\text{Varianca celih: }\sigma _1 \sim &\text{ U }(0,100) \\
+\text{Varianca zlomljenih: }\sigma _2 \sim &\text{ U }(0,500) \\
+\text{Delež zlomljenih: }\theta \sim &\text{ U }(0,1) \\
+\end{split}
+\end{equation*}
+
+Za povprečje celih menimo, da je vsaj polovica dolžine vrečke. Za povprečje zlomljenih menimo, da je kvečjemu polovica dolžine vrečke (palčka se zlomi na vsaj dva dela). Zelo neinformativno mnenje za varianci izberemo zato, ker mislimo, da je lahko skoraj kjerkoli. Podobno za delež zlomljenih.
+
 
 Viri pristranskosti:
 
-- napaka merjenja, $\pm 0.5 \text{mm}$\\
 - dolžine zlomljenih palčk so prevelike (ne zlomijo se točno po sredini)\\
-
-Model:
-
-- mixture of two normal distributions (prvi za cele palčke, druge za zlomljene)
-
-Apriori:
-
-- uniform?
 
 
 \section{Analiza podatkov}
