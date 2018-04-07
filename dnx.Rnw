@@ -65,9 +65,9 @@ Skupaj imamo torej $5$ parametrov. Za njihove apriorne porazdelitve izberemo
 \end{split}
 \end{equation*}
 
-\subsection{Model števila palčk}
 Za povprečje celih menimo, da je vsaj polovica dolžine vrečke. Za povprečje zlomljenih menimo, da je kvečjemu polovica dolžine vrečke (palčka se zlomi na vsaj dva dela). Za varianci izberemo zelo neinformativno mnenje, ker mislimo, da sta lahko skoraj kjerkoli. Podobno za delež celih.
 
+\subsection{Model števila palčk}
 Za model števila palčk v vrečki izberemo normalno porazdelitev z dvema parametroma $\mu$ in $\sigma$. Ker si vnaprej ne znamo predstavljati kolikšno je število palčk, za apriorno porazdelitev vzamemo Jeffreyev prior. Model za prvi dve vrečki ločimo od modela za vrečki, ki smo ju spustili iz $4\text{m}$.
 
 Modele izdelamo s pomočjo programskega okolja Stan.
@@ -83,32 +83,34 @@ Med izvajanjem meritev opazimo naslednje potencialne vire napak:
 
 \section{Rezultati}
 
+Na slikah \ref{fig1}-\ref{fig4} so podane (od zgoraj navzdol) ocene parametrov, traceplot, napovedna aposteriorna gostota in pripadajoči (normalizirani) histogram.
+
 \begin{minipage}[t]{0.48\linewidth}
 
 \includegraphics[width = \linewidth]{./dnx-FIG1}
 \vspace{-.65cm}
-\captionof{figure}{Aposteriorna gostota in ocene parametri za dolžine palčk v prvi vrečki.}
+\captionof{figure}{Rezultati za prvo vrečko.}
 \label{fig1}
-\vspace{.3cm}
+\vspace{.5cm}
 \includegraphics[width = \linewidth]{./dnx-FIG2}
 \vspace{-.65cm}
-\captionof{figure}{Aposteriorna gostota in ocene parametri za dolžine palčk v drugi vrečki.}
+\captionof{figure}{Rezultati za drugo vrečko.}
 \label{fig2}
-\vspace{.3cm}
+\vspace{.5cm}
 
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.48\linewidth}
 \includegraphics[width = \linewidth]{./dnx-FIG3}
 \vspace{-.65cm}
-\captionof{figure}{Aposteriorna gostota in ocene parametri za dolžine palčk v tretji vrečki (spuščena iz $4\text{m}$).}
+\captionof{figure}{Rezultati za tretjo vrečko (spuščena iz $4\text{m}$).}
 \label{fig3}
-\vspace{.3cm}
+\vspace{.5cm}
 \includegraphics[width = \linewidth]{./dnx-FIG4}
 \vspace{-.65cm}
-\captionof{figure}{Aposteriorna gostota in ocene parametri za dolžine palčk v četrti vrečki (spuščena iz $4\text{m}$).}
+\captionof{figure}{Rezultati za četrto vrečko (spuščena iz $4\text{m}$).}
 \label{fig4}
-\vspace{.3cm}
+\vspace{.5cm}
 \end{minipage}
 
 \section{Diskusija}
