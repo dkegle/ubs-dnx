@@ -60,17 +60,11 @@ print(output2)
 ggplot()+geom_density(aes(x=extract(output2)$y_pred))+xlim(0, 1000)
 
 
-library(mcmcse)
+summary(output1)$summary["mu", "mean"] # mean for 1. pack
+summary(output1)$summary["mu", "se_mean"] #and MCMC standard error 
+summary(output1)$summary["mu", "sd"] #sd. dev. 
 
-smp_mu1 <- extract(output1)$mu
+summary(output2)$summary["mu", "mean"] # mean for 2. pack
+summary(output2)$summary["mu", "se_mean"] #and MCMC standard error
+summary(output2)$summary["mu", "sd"] #sd. dev. 
 
-print(ess(smp_mu1)) # effective sample size
-
-print(mcse(smp_mu1))  # est. MCMC standard error
-
-
-smp_mu2 <- extract(output2)$mu
-
-print(ess(smp_mu2)) # effective sample size
-
-print(mcse(smp_mu2))  # est. MCMC standard error

@@ -124,32 +124,22 @@ print(output4)
 ggplot()+geom_density(aes(x=extract(output4)$y_pred))+xlim(0, 1)
 
 
-library(mcmcse)
 
-smp_y_pred1 <- extract(output1)$y_pred
+summary(output1)$summary["y_pred", "mean"] # mean for 1. pack
+summary(output1)$summary["y_pred", "se_mean"] #and MCMC standard error 
+summary(output1)$summary["y_pred", "sd"] #sd. dev. 
 
-print(ess(smp_y_pred1)) # effective sample size
+summary(output2)$summary["y_pred", "mean"] # mean for 2. pack
+summary(output2)$summary["y_pred", "se_mean"] #and MCMC standard error
+summary(output2)$summary["y_pred", "sd"] #sd. dev. 
 
-print(mcse(smp_y_pred1))  # est. MCMC standard error
+summary(output3)$summary["y_pred", "mean"] # mean for 3. pack
+summary(output3)$summary["y_pred", "se_mean"] #and MCMC standard error 
+summary(output3)$summary["y_pred", "sd"] #sd. dev. 
 
-
-smp_y_pred2 <- extract(output2)$y_pred
-
-print(ess(smp_y_pred2)) # effective sample size
-
-print(mcse(smp_y_pred2))  # est. MCMC standard error
-
-
-smp_y_pred3 <- extract(output3)$y_pred
-
-print(ess(smp_y_pred3)) # effective sample size
-
-print(mcse(smp_y_pred3))  # est. MCMC standard error
+summary(output4)$summary["y_pred", "mean"] # mean for 4. pack
+summary(output4)$summary["y_pred", "se_mean"] #and MCMC standard error
+summary(output4)$summary["y_pred", "sd"] #sd. dev. 
 
 
-smp_y_pred4 <- extract(output4)$y_pred
-
-print(ess(smp_y_pred4)) # effective sample size
-
-print(mcse(smp_y_pred4))  # est. MCMC standard error
 
