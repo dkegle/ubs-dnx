@@ -62,7 +62,9 @@ ggplot()+geom_density(aes(x=extract(output2)$y_pred))+xlim(0, 1000)
 
 summary(output1)$summary["mu", "mean"] # mean for 1. pack
 summary(output1)$summary["mu", "se_mean"] #and MCMC standard error 
-
+summary(output1)$summary["mu", "sd"] #sd. dev. 
 
 summary(output2)$summary["mu", "mean"] # mean for 2. pack
 summary(output2)$summary["mu", "se_mean"] #and MCMC standard error
+summary(output2)$summary["mu", "sd"] #sd. dev. 
+
