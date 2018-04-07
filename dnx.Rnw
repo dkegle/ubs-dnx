@@ -85,13 +85,14 @@ Med izvajanjem meritev opazimo naslednje potencialne vire napak:
 
 Model izračuna pričakovano število palčk za cele vrečke $121.5$, standardni odklon $\sigma =47.5$ in napako $err _{mcmc} = \pm 1.3$. Za spuščene vrečke dobimo vrednosti $\mu = 303.7$, $\sigma = 132.6$ in napako $err _{mcmc} = \pm 5.8$.
 
-Na slikah \ref{fig1}-\ref{fig4} so podane (od zgoraj navzdol) ocene parametrov, traceplot, napovedna aposteriorna porazdelitev in pripadajoči (normalizirani) histogram za dolžine palčk.
+Za dolžine palčk so na slikah \ref{fig1}-\ref{fig4} podane (od zgoraj navzdol) ocene parametrov, traceplot, napovedna aposteriorna porazdelitev in pripadajoči (normalizirani) histogram.
 
 \begin{minipage}[t]{0.48\linewidth}
-<<label=fig1, fig=T,width=6,height=6>>=
+<<label=fig1, fig=T,width=6,height=6, results=hide>>=
 library(rstan) # observe startup messages
 library(ggplot2)
 library(gridExtra)
+library(mcmcse)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
@@ -130,6 +131,12 @@ p3 = ggplot() + geom_density(aes(x=extract(output1)$y_pred))+xlim(0, 1) +
                  bins=30, col="lightblue4", fill="green", alpha = .15) + 
   theme_gray(base_size=13)
 grid.arrange(p1, p2, p3, nrow = 3)
+
+smp_y_pred1 <- extract(output1)$y_pred
+
+print(ess(smp_y_pred1)) # effective sample size
+
+print(mcse(smp_y_pred1))  # est. MCMC standard error
 @
 \includegraphics[width = \linewidth]{./dnx-fig1}
 \vspace{-.65cm}
@@ -137,10 +144,11 @@ grid.arrange(p1, p2, p3, nrow = 3)
 \label{fig1}
 \vspace{.5cm}
 
-<<label=fig2, fig=T,width=6,height=6>>=
+<<label=fig2, fig=T,width=6,height=6, results=hide>>=
 library("rstan") # observe startup messages
 library(ggplot2)
 library(gridExtra)
+library(mcmcse)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
@@ -179,6 +187,12 @@ p3 = ggplot() + geom_density(aes(x=extract(output2)$y_pred))+xlim(0, 1) +
                  bins=30, col="lightblue4", fill="red", alpha = .15) + 
   theme_gray(base_size=13)
 grid.arrange(p1, p2, p3, nrow = 3)
+
+smp_y_pred2 <- extract(output2)$y_pred
+
+print(ess(smp_y_pred2)) # effective sample size
+
+print(mcse(smp_y_pred2))  # est. MCMC standard error
 @
 
 \includegraphics[width = \linewidth]{./dnx-fig2}
@@ -191,10 +205,11 @@ grid.arrange(p1, p2, p3, nrow = 3)
 \hfill
 \begin{minipage}[t]{0.48\linewidth}
 
-<<label=fig3, fig=T,width=6,height=6>>=
+<<label=fig3, fig=T,width=6,height=6, results=hide>>=
 library("rstan") # observe startup messages
 library(ggplot2)
 library(gridExtra)
+library(mcmcse)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
@@ -233,6 +248,12 @@ p3 = ggplot() + geom_density(aes(x=extract(output3)$y_pred))+xlim(0, 1) +
                  bins=30, col="lightblue4", fill="orange", alpha = .15) + 
   theme_gray(base_size=13)
 grid.arrange(p1, p2, p3, nrow = 3)
+
+smp_y_pred3 <- extract(output3)$y_pred
+
+print(ess(smp_y_pred3)) # effective sample size
+
+print(mcse(smp_y_pred3))  # est. MCMC standard error
 @
 \includegraphics[width = \linewidth]{./dnx-fig3}
 \vspace{-.65cm}
@@ -240,10 +261,11 @@ grid.arrange(p1, p2, p3, nrow = 3)
 \label{fig3}
 \vspace{.5cm}
 
-<<label=fig4, fig=T,width=6,height=6>>=
+<<label=fig4, fig=T,width=6,height=6, results=hide>>=
 library("rstan") # observe startup messages
 library(ggplot2)
 library(gridExtra)
+library(mcmcse)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
@@ -282,6 +304,12 @@ p3 = ggplot() + geom_density(aes(x=extract(output4)$y_pred))+xlim(0, 1) +
                  bins=30, col="lightblue4", fill="blue", alpha = .15) + 
   theme_gray(base_size=13)
 grid.arrange(p1, p2, p3, nrow = 3)
+
+smp_y_pred4 <- extract(output4)$y_pred
+
+print(ess(smp_y_pred4)) # effective sample size
+
+print(mcse(smp_y_pred4))  # est. MCMC standard error
 @
 \includegraphics[width = \linewidth]{./dnx-fig4}
 \vspace{-.65cm}
@@ -291,6 +319,7 @@ grid.arrange(p1, p2, p3, nrow = 3)
 \end{minipage}
 
 \section{Diskusija}
-Pričakovano število zlomljenih palčk se je po padcu vrečke bistveno povečalo, kar ni presenetljivo. Tudi povečanje standardnega odklona ni presenetljivo. Glede na to, da smo imeli na voljo le dva vzorca pred padcem in dva vzorca po padcu, še vedno menimo, da kljub nizki napaki $err_{mcmc}$ model ni robusten. 
+Pričakovano število zlomljenih palčk se je po padcu vrečke bistveno povečalo, kar ni presenetljivo. Tudi povečanje standardnega odklona ni presenetljivo.
 
+Pri izračunu porazdelitve za dolžino palčk Stan težav s konvergenco ni imel, kar je razvidno iz nekoreliranosti traceplota. Izračunana porazdelitev se približno ujema s histogramom.
 \end{document}
