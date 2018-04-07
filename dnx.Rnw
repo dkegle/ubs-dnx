@@ -83,18 +83,105 @@ Med izvajanjem meritev opazimo naslednje potencialne vire napak:
 
 \section{Rezultati}
 
-Model izračuna pričakovano število palčk za cele vrečke $121.4$, standardni odklon $\sigma =121.5$ in napako $err _{mcmc} = \pm 1.3$. Za spuščene vrečke dobimo vrednosti $\mu = 303.7$, $\sigma = 132.6$ in napako $err _{mcmc} = \pm 6.1$.
+Model izračuna pričakovano število palčk za cele vrečke $121.5$, standardni odklon $\sigma =47.5$ in napako $err _{mcmc} = \pm 1.3$. Za spuščene vrečke dobimo vrednosti $\mu = 303.7$, $\sigma = 132.6$ in napako $err _{mcmc} = \pm 5.8$.
 
 Na slikah \ref{fig1}-\ref{fig4} so podane (od zgoraj navzdol) ocene parametrov, traceplot, napovedna aposteriorna porazdelitev in pripadajoči (normalizirani) histogram za dolžine palčk.
 
 \begin{minipage}[t]{0.48\linewidth}
+<<label=fig1, fig=T,width=6,height=6>>=
+library(rstan) # observe startup messages
+library(ggplot2)
+library(gridExtra)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
 
-\includegraphics[width = \linewidth]{./dnx-FIG1}
+sticks1 <- read.csv(file="models/vrecka-1.csv", header=TRUE, sep=",")
+all_sticks1 <-c(sticks1$cela, sticks1$sredina.zlomljene, sticks1$konec.zlomljen)
+all_sticks1 <- all_sticks1[!is.na(all_sticks1)]
+length_of_pack <- 16.5
+y1<-all_sticks1/length_of_pack
+
+stan_data1 <- list(y = y1,
+                  n = length(y1),
+                  mu1_lb = 0.5, 
+                  mu1_ub = 1,
+                  sigma1_lb = 0,
+                  sigma1_ub = 100,
+                  mu2_lb = 0,
+                  mu2_ub = 0.5,
+                  sigma2_lb = 0,
+                  sigma2_ub = 500)
+
+output1 <- stan(file = "models/mixed_normal.stan",
+               data = stan_data1,
+               iter = 4000, warmup = 2000,
+               chains = 1,
+               seed = 100,
+               control = list(adapt_delta = 0.9))
+
+pv = c("mu1", "mu2", "sigma1", "sigma2", "theta")
+
+p1 = plot(output1, pars=pv)
+p2 = traceplot(output1, pars=pv) + theme(legend.position="none", 
+                                         axis.title.y=element_blank())
+p3 = ggplot() + geom_density(aes(x=extract(output1)$y_pred))+xlim(0, 1) + 
+  xlab("Dolzina palck") + ylab("Napovedna apo.") + 
+  geom_histogram(aes(x=y1, y=..density..) , 
+                 bins=30, col="lightblue4", fill="green", alpha = .15) + 
+  theme_gray(base_size=13)
+grid.arrange(p1, p2, p3, nrow = 3)
+@
+\includegraphics[width = \linewidth]{./dnx-fig1}
 \vspace{-.65cm}
 \captionof{figure}{Rezultati za prvo vrečko.}
 \label{fig1}
 \vspace{.5cm}
-\includegraphics[width = \linewidth]{./dnx-FIG2}
+
+<<label=fig2, fig=T,width=6,height=6>>=
+library("rstan") # observe startup messages
+library(ggplot2)
+library(gridExtra)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+sticks2 <- read.csv(file="models/vrecka-2.csv", header=TRUE, sep=",")
+all_sticks2 <-c(sticks2$cela, sticks2$sredina.zlomljene, sticks2$konec.zlomljen)
+all_sticks2 <- all_sticks2[!is.na(all_sticks2)]
+length_of_pack <- 16.5
+y2<-all_sticks2/length_of_pack
+
+stan_data2 <- list(y = y2,
+                  n = length(y2),
+                  mu1_lb = 0.5, 
+                  mu1_ub = 1,
+                  sigma1_lb = 0,
+                  sigma1_ub = 100,
+                  mu2_lb = 0,
+                  mu2_ub = 0.5,
+                  sigma2_lb = 0,
+                  sigma2_ub = 500)
+
+output2 <- stan(file = "models/mixed_normal.stan",
+               data = stan_data2,
+               iter = 4000, warmup = 2000,
+               chains = 1,
+               seed = 100,
+               control = list(adapt_delta = 0.9))
+
+pv = c("mu1", "mu2", "sigma1", "sigma2", "theta")
+
+p1 = plot(output2, pars=pv)
+p2 = traceplot(output2, pars=pv) + theme(legend.position="none", 
+                                         axis.title.y=element_blank())
+p3 = ggplot() + geom_density(aes(x=extract(output2)$y_pred))+xlim(0, 1) + 
+  xlab("Dolzina palck") + ylab("Napovedna apo.") + 
+  geom_histogram(aes(x=y2, y=..density..) , 
+                 bins=30, col="lightblue4", fill="red", alpha = .15) + 
+  theme_gray(base_size=13)
+grid.arrange(p1, p2, p3, nrow = 3)
+@
+
+\includegraphics[width = \linewidth]{./dnx-fig2}
 \vspace{-.65cm}
 \captionof{figure}{Rezultati za drugo vrečko.}
 \label{fig2}
@@ -103,12 +190,100 @@ Na slikah \ref{fig1}-\ref{fig4} so podane (od zgoraj navzdol) ocene parametrov, 
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.48\linewidth}
-\includegraphics[width = \linewidth]{./dnx-FIG3}
+
+<<label=fig3, fig=T,width=6,height=6>>=
+library("rstan") # observe startup messages
+library(ggplot2)
+library(gridExtra)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+sticks3 <- read.csv(file="models/vrecka-3.csv", header=TRUE, sep=",")
+all_sticks3 <-c(sticks3$cela, sticks3$sredina.zlomljene, sticks3$konec.zlomljen)
+all_sticks3 <- all_sticks3[!is.na(all_sticks3)]
+length_of_pack <- 16.5
+y3<-all_sticks3/length_of_pack
+
+stan_data3 <- list(y = y3,
+                  n = length(y3),
+                  mu1_lb = 0.5, 
+                  mu1_ub = 1,
+                  sigma1_lb = 0,
+                  sigma1_ub = 100,
+                  mu2_lb = 0,
+                  mu2_ub = 0.5,
+                  sigma2_lb = 0,
+                  sigma2_ub = 500)
+
+output3 <- stan(file = "models/mixed_normal.stan",
+               data = stan_data3,
+               iter = 4000, warmup = 2000,
+               chains = 1,
+               seed = 100,
+               control = list(adapt_delta = 0.9))
+
+pv = c("mu1", "mu2", "sigma1", "sigma2", "theta")
+
+p1 = plot(output3, pars=pv)
+p2 = traceplot(output3, pars=pv) + theme(legend.position="none", 
+                                         axis.title.y=element_blank())
+p3 = ggplot() + geom_density(aes(x=extract(output3)$y_pred))+xlim(0, 1) + 
+  xlab("Dolzina palck") + ylab("Napovedna apo.") + 
+  geom_histogram(aes(x=y3, y=..density..) , 
+                 bins=30, col="lightblue4", fill="orange", alpha = .15) + 
+  theme_gray(base_size=13)
+grid.arrange(p1, p2, p3, nrow = 3)
+@
+\includegraphics[width = \linewidth]{./dnx-fig3}
 \vspace{-.65cm}
 \captionof{figure}{Rezultati za tretjo vrečko (spuščena iz $4\text{m}$).}
 \label{fig3}
 \vspace{.5cm}
-\includegraphics[width = \linewidth]{./dnx-FIG4}
+
+<<label=fig4, fig=T,width=6,height=6>>=
+library("rstan") # observe startup messages
+library(ggplot2)
+library(gridExtra)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+sticks4 <- read.csv(file="models/vrecka-4.csv", header=TRUE, sep=",")
+all_sticks4 <-c(sticks4$cela, sticks4$sredina.zlomljene, sticks4$konec.zlomljen)
+all_sticks4 <- all_sticks4[!is.na(all_sticks4)]
+length_of_pack <- 16.5
+y4<-all_sticks4/length_of_pack
+
+stan_data4 <- list(y = y4,
+                  n = length(y4),
+                  mu1_lb = 0.5, 
+                  mu1_ub = 1,
+                  sigma1_lb = 0,
+                  sigma1_ub = 100,
+                  mu2_lb = 0,
+                  mu2_ub = 0.5,
+                  sigma2_lb = 0,
+                  sigma2_ub = 500)
+
+output4 <- stan(file = "models/mixed_normal.stan",
+               data = stan_data4,
+               iter = 4000, warmup = 2000,
+               chains = 1,
+               seed = 100,
+               control = list(adapt_delta = 0.9))
+
+pv = c("mu1", "mu2", "sigma1", "sigma2", "theta")
+
+p1 = plot(output4, pars=pv)
+p2 = traceplot(output4, pars=pv) + theme(legend.position="none", 
+                                         axis.title.y=element_blank())
+p3 = ggplot() + geom_density(aes(x=extract(output4)$y_pred))+xlim(0, 1) + 
+  xlab("Dolzina palck") + ylab("Napovedna apo.") + 
+  geom_histogram(aes(x=y4, y=..density..) , 
+                 bins=30, col="lightblue4", fill="blue", alpha = .15) + 
+  theme_gray(base_size=13)
+grid.arrange(p1, p2, p3, nrow = 3)
+@
+\includegraphics[width = \linewidth]{./dnx-fig4}
 \vspace{-.65cm}
 \captionof{figure}{Rezultati za četrto vrečko (spuščena iz $4\text{m}$).}
 \label{fig4}
