@@ -37,11 +37,11 @@ options(width=60)
 Velikost ekipe: $2$.
 
 \section{Načrt in zbiranje podatkov}
-Imamo štiri vrečke bobi palčk. Merili bomo njihove dolžine, pri čemer bomo dve vrečki spustili iz višine $4\text{m}$. Meritve bomo opravili na $\pm 1\text{mm}$ natančno in jih normalizirali na velikost vrečke.
+Imamo štiri vrečke bobi palčk. Prešteli bomo koliko jih je in izmerili njihove dolžine, pri čemer bomo dve vrečki spustili iz višine $4\text{m}$. Meritve dolžin bomo opravili na $\pm 1\text{mm}$ natančno in jih normalizirali na velikost vrečke.
 
-Opazimo, da so že v trgovini v vrečkah nekatere palčke zlomljene. Zato naš model (za eno vrečko) sestavimo iz dveh normalnih porazdelitev, ki bosta opisovali dolžine celih in zlomljenih palčk, ter Bernoullijeve porazdelitve, ki bo opisovala delež zlomljenih palčk.
+Opazimo, da so v vrečki že v trgovini nekatere palčke zlomljene. Zato model dolžin palčk sestavimo iz dveh normalnih porazdelitev, ki bosta opisovali dolžine celih in zlomljenih palčk, ter Bernoullijeve porazdelitve, ki bo opisovala delež zlomljenih.
 
-Skupaj imamo torej $5$ parametrov in za njihove apriorne porazdelitve izberemo 
+Skupaj imamo torej $5$ parametrov. Za njihove apriorne porazdelitve izberemo 
 \begin{equation*}
 \begin{split}
 \text{Povprečje celih: } \mu _1 \sim & \text{ U }(0.5,1) \\
@@ -52,15 +52,20 @@ Skupaj imamo torej $5$ parametrov in za njihove apriorne porazdelitve izberemo
 \end{split}
 \end{equation*}
 
-Za povprečje celih menimo, da je vsaj polovica dolžine vrečke. Za povprečje zlomljenih menimo, da je kvečjemu polovica dolžine vrečke (palčka se zlomi na vsaj dva dela). Zelo neinformativno mnenje za varianci izberemo zato, ker mislimo, da je lahko skoraj kjerkoli. Podobno za delež zlomljenih.
+Za povprečje celih menimo, da je vsaj polovica dolžine vrečke. Za povprečje zlomljenih menimo, da je kvečjemu polovica dolžine vrečke (palčka se zlomi na vsaj dva dela). Za varianci izberemo zelo neinformativno mnenje, ker mislimo, da sta lahko skoraj kjerkoli. Podobno za delež zlomljenih.
 
+Za model števila palčk izberemo normalno porazdelitev z dvema parametroma $\mu$ in $\sigma$. Ker si vnaprej ne znamo predstavljati kolikšno je število palčk, za apriorno porazdelitev vzamemo Jeffreyev prior.
 
-Viri pristranskosti:
-
-- dolžine zlomljenih palčk so prevelike (ne zlomijo se točno po sredini)\\
+Med izvajanjem meritev opazimo naslednje potencialne vire pristranskosti:
+\begin{itemize}
+\item Palčke se ne zlomijo vedno pravokotno, ampak se pogosto zlomijo malce pod kotom. Zato je vsota dolžin zlomljenih lahko večja kot bi bila, če bi jih izmerili cele.
+\item Nekateri deli so zlomljeni vodoravno (vzdolž palčke). Odločimo se, da jih ignoriramo, saj je preostanek vsebovan v drugih palčkah (ne prispeva k pristranskosti glede dolžin).
+\item Nekateri deli palčk so zelo majhni ali skoraj zdrobljeni. Odločimo se, da jih ne vključimo v meritve.
+\end{itemize}
 
 
 \section{Analiza podatkov}
+
 
 
 \section{Interpretacija rezultatov}
