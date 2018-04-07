@@ -33,7 +33,7 @@ model {
   sigma2 ~ uniform(sigma2_lb, sigma2_ub);
   
 
-  // normal - skew normal mixture LH
+  // normal - normal mixture LH
   for (i in 1:n){
      target += log_mix(theta,
                      normal_lpdf(y[i] | mu1, sigma1),
