@@ -83,7 +83,9 @@ Med izvajanjem meritev opazimo naslednje potencialne vire napak:
 
 \section{Rezultati}
 
-Na slikah \ref{fig1}-\ref{fig4} so podane (od zgoraj navzdol) ocene parametrov, traceplot, napovedna aposteriorna gostota in pripadajoči (normalizirani) histogram.
+Model izračuna pričakovano število palčk za cele vrečke $121.4$, standardni odklon $\sigma =121.5$ in napako $err _{mcmc} = \pm 1.3$. Za spuščene vrečke dobimo vrednosti $\mu = 303.7$, $\sigma = 132.6$ in napako $err _{mcmc} = \pm 6.1$.
+
+Na slikah \ref{fig1}-\ref{fig4} so podane (od zgoraj navzdol) ocene parametrov, traceplot, napovedna aposteriorna porazdelitev in pripadajoči (normalizirani) histogram za dolžine palčk.
 
 \begin{minipage}[t]{0.48\linewidth}
 
@@ -114,6 +116,6 @@ Na slikah \ref{fig1}-\ref{fig4} so podane (od zgoraj navzdol) ocene parametrov, 
 \end{minipage}
 
 \section{Diskusija}
-
+Pričakovano število zlomljenih palčk se je po padcu vrečke bistveno povečalo, kar ni presenetljivo. Tudi povečanje standardnega odklona ni presenetljivo. Glede na to, da smo imeli na voljo le dva vzorca pred padcem in dva vzorca po padcu, še vedno menimo, da kljub nizki napaki $err_{mcmc}$ model ni robusten. 
 
 \end{document}
