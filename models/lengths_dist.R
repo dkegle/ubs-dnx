@@ -30,15 +30,15 @@ options(mc.cores = parallel::detectCores())
 
 # Prepare dataset for STAN
 stan_data1 <- list(y = y1,
-                  n = length(y1),
-                  mu1_lb = 0.5, 
-                  mu1_ub = 1,
-                  sigma1_lb = 0,
-                  sigma1_ub = 100,
-                  mu2_lb = 0,
-                  mu2_ub = 0.5,
-                  sigma2_lb = 0,
-                  sigma2_ub = 500)
+                   n = length(y1),
+                   mu1_lb = 0.5, 
+                   mu1_ub = 1,
+                   sigma1_lb = 0,
+                   sigma1_ub = 100,
+                   mu2_lb = 0,
+                   mu2_ub = 0.5,
+                   sigma2_lb = 0,
+                   sigma2_ub = 500)
 
 stan_data2 <- list(y = y2,
                    n = length(y2),
@@ -75,11 +75,11 @@ stan_data4 <- list(y = y4,
 
 # Sample
 output1 <- stan(file = "mixed_normal.stan",
-               data = stan_data1,
-               iter = 4000, warmup = 2000,
-               chains = 1,
-               seed = 100,
-               control = list(adapt_delta = 0.9))
+                data = stan_data1,
+                iter = 4000, warmup = 2000,
+                chains = 1,
+                seed = 100,
+                control = list(adapt_delta = 0.9))
 
 output2 <- stan(file = "mixed_normal.stan",
                 data = stan_data2,
@@ -140,17 +140,15 @@ print(ess(smp_y_pred2)) # effective sample size
 print(mcse(smp_y_pred2))  # est. MCMC standard error
 
 
-smp_y_pred3 <- extract(output1)$y_pred
+smp_y_pred3 <- extract(output3)$y_pred
 
 print(ess(smp_y_pred3)) # effective sample size
 
 print(mcse(smp_y_pred3))  # est. MCMC standard error
 
 
-smp_y_pred4 <- extract(output1)$y_pred
+smp_y_pred4 <- extract(output4)$y_pred
 
 print(ess(smp_y_pred4)) # effective sample size
 
 print(mcse(smp_y_pred4))  # est. MCMC standard error
-
-
