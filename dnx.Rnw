@@ -20,11 +20,11 @@
         [.]% punctuation or other commands following subsection title
 
  \geometry{
- a4paper,
- bottom=1.25in,
- right=1.25in,
- left=1.25in,
- top=1.25in,
+  a4paper,
+  bottom=2cm,
+  right=2cm,
+  left=2cm,
+  top=2cm,
 }
 
 \titlespacing{\section}{0pt}{.75em}{.25em}
@@ -70,7 +70,7 @@ Za povprečje celih menimo, da je vsaj polovica dolžine vrečke. Za povprečje 
 
 Za model števila palčk v vrečki izberemo normalno porazdelitev z dvema parametroma $\mu$ in $\sigma$. Ker si vnaprej ne znamo predstavljati kolikšno je število palčk, za apriorno porazdelitev vzamemo Jeffreyev prior. Model za prvi dve vrečki ločimo od modela za vrečki, ki smo ju spustili iz $4\text{m}$.
 
-Modele izdelamo s pomočjo programskega jezika Stan.
+Modele izdelamo s pomočjo programskega okolja Stan.
 
 \subsection{Viri pristranskosti}
 Med izvajanjem meritev opazimo naslednje potencialne vire napak:
@@ -81,136 +81,33 @@ Med izvajanjem meritev opazimo naslednje potencialne vire napak:
 \item Za model števila palčk imamo le dva vzorca (dve celi vrečki in dve vrečki, ki smo jih spustili iz $4\text{m}$). 
 \end{itemize}
 
-
 \section{Rezultati}
 
 \begin{minipage}[t]{0.48\linewidth}
-<<label=FIG1,fig=T,width=8,height=4>>=
-library(ggplot2)
-library(gridExtra)
-library("rstan") # observe startup messages
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
-sticks1 <- read.csv(file="models/vrecka-1.csv", header=TRUE, sep=",")
-all_sticks1 <-c(sticks1$cela, sticks1$sredina.zlomljene, sticks1$konec.zlomljen)
-all_sticks1 <- all_sticks1[!is.na(all_sticks1)]
 
-sticks2 <- read.csv(file="models/vrecka-2.csv", header=TRUE, sep=",")
-all_sticks2 <-c(sticks2$cela, sticks2$sredina.zlomljene, sticks2$konec.zlomljen)
-all_sticks2 <- all_sticks2[!is.na(all_sticks2)]
-
-y1<-c(length(all_sticks1), length(all_sticks2)) 
-
-# Prepare dataset for STAN
-stan_data1 <- list(y = y1,
-                  n = length(y1))
-
-# Sample
-output1 <- stan(file = "models/normal.stan",
-               data = stan_data1,
-               iter = 1500, warmup = 500,
-               chains = 4,
-               seed = 100,
-               control = list(adapt_delta = 0.9))
-
-
-p1 = ggplot() + geom_density(aes(x=extract(output1)$y_pred))+xlim(0, 1000) + 
-  xlab("Stevilo palck") + ylab("Gostota") + 
-  theme_gray(base_size=13)
-p2 = plot(output1)
-
-grid.arrange(p1, p2, nrow = 2)
-
-library(mcmcse)
-
-smp_mu1 <- extract(output1)$mu
-
-#ess(smp_mu1) # effective sample size
-
-#mcse(smp_mu1)  # est. MCMC standard error
-@
 \includegraphics[width = \linewidth]{./dnx-FIG1}
 \vspace{-.65cm}
-\captionof{figure}{Parametri in aposteriorna gostota za število palčk v prvih dveh vrečkah.}
+\captionof{figure}{Aposteriorna gostota in ocene parametri za dolžine palčk v prvi vrečki.}
 \label{fig1}
 \vspace{.3cm}
+\includegraphics[width = \linewidth]{./dnx-FIG2}
+\vspace{-.65cm}
+\captionof{figure}{Aposteriorna gostota in ocene parametri za dolžine palčk v drugi vrečki.}
+\label{fig2}
+\vspace{.3cm}
+
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.48\linewidth}
-<<label=FIG2,fig=T,width=8,height=4>>=
-library(ggplot2)
-library(gridExtra)
-library("rstan") # observe startup messages
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
-sticks3 <- read.csv(file="models/vrecka-3.csv", header=TRUE, sep=",")
-all_sticks3 <-c(sticks3$cela, sticks3$sredina.zlomljene, sticks3$konec.zlomljen)
-all_sticks3 <- all_sticks3[!is.na(all_sticks3)]
-
-sticks4 <- read.csv(file="models/vrecka-4.csv", header=TRUE, sep=",")
-all_sticks4 <-c(sticks4$cela, sticks4$sredina.zlomljene, sticks4$konec.zlomljen)
-all_sticks4 <- all_sticks4[!is.na(all_sticks4)]
-
-y2<-c(length(all_sticks3), length(all_sticks4)) #thrown packs
-
-# Prepare dataset for STAN
-stan_data2 <- list(y = y2,
-                  n = length(y2))
-
-# Sample
-output2 <- stan(file = "models/normal.stan",
-               data = stan_data2,
-               iter = 1500, warmup = 500,
-               chains = 4,
-               seed = 100,
-               control = list(adapt_delta = 0.9))
-
-p1 = ggplot() + geom_density(aes(x=extract(output2)$y_pred))+xlim(0, 1000) + 
-  xlab("Stevilo palck") + ylab("Gostota") + 
-  theme_gray(base_size=13)
-p2 = plot(output2)
-
-grid.arrange(p1, p2, nrow = 2)
-
-library(mcmcse)
-
-smp_mu2 <- extract(output2)$mu
-
-#ess(smp_mu2) # effective sample size
-
-#mcse(smp_mu2)  # est. MCMC standard error
-@
-\includegraphics[width = \linewidth]{./dnx-FIG2}
-\vspace{-.65cm}
-\captionof{figure}{Parametri in aposteriorna gostota za število palčk v drugih dveh vrečkah (spuščenih iz višine $4\text{m}$).}
-\label{fig2}
-
-\end{minipage}
-\begin{minipage}[t]{0.48\linewidth}
-
 \includegraphics[width = \linewidth]{./dnx-FIG3}
 \vspace{-.65cm}
-\captionof{figure}{Dolžine prva vrečka.}
+\captionof{figure}{Aposteriorna gostota in ocene parametri za dolžine palčk v tretji vrečki (spuščena iz $4\text{m}$).}
 \label{fig3}
 \vspace{.3cm}
 \includegraphics[width = \linewidth]{./dnx-FIG4}
 \vspace{-.65cm}
-\captionof{figure}{Dolžine druga vrečka.}
+\captionof{figure}{Aposteriorna gostota in ocene parametri za dolžine palčk v četrti vrečki (spuščena iz $4\text{m}$).}
 \label{fig4}
-\vspace{.3cm}
-
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.48\linewidth}
-\includegraphics[width = \linewidth]{./dnx-FIG5}
-\vspace{-.65cm}
-\captionof{figure}{Dolžine tretja vrečka.}
-\label{fig5}
-\vspace{.3cm}
-\includegraphics[width = \linewidth]{./dnx-FIG6}
-\vspace{-.65cm}
-\captionof{figure}{Dolžine četrta vrečka.}
-\label{fig6}
 \vspace{.3cm}
 \end{minipage}
 
